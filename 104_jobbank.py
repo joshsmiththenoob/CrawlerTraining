@@ -1,13 +1,13 @@
-from selenium.webdriver import Edge
-from selenium.webdriver.edge.service import Service
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
 import time
 import csv
 
-service = Service("./msedgedriver")
-driver = Edge(service=service)
+service = Service("./chromedriver")
+driver = Chrome(service=service)
 
 url = "https://www.104.com.tw/jobs/main/"  # go to jobbank
 driver.get(url) # 以網頁瀏覽器開啟網址
@@ -28,12 +28,12 @@ time.sleep(3)
 
 # 使用 driver.current_url 取得 Selenium 目前瀏覽網頁的網址
 
-url = driver.current_url
-user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42"
-# 準備request header
-headers = {"user-Agent" : user_agent}
-res = requests.get(url,headers=headers) # 帶有header並以get方式輸入url進行連線 → sever return response = html的"字串檔案"(未以utf-8 decode)
-soup = BeautifulSoup(res.text,"html.parser") #將response的html以utf-8形式解碼 成為"字串檔案" → 而後以bs解析成為真正的html標籤檔案
+# url = driver.current_url
+# user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42"
+# # 準備request header
+# headers = {"user-Agent" : user_agent}
+# res = requests.get(url,headers=headers) # 帶有header並以get方式輸入url進行連線 → sever return response = html的"字串檔案"(未以utf-8 decode)
+soup = BeautifulSoup(driver.page_source,"html.parser") #將response的html以utf-8形式解碼 成為"字串檔案" → 而後以bs解析成為真正的html標籤檔案
 
 # print(soup)
 
