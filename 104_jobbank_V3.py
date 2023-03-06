@@ -111,7 +111,7 @@ def main():
     job_table = pd.DataFrame() # create empty table
 
     # Step 4 : crawling info of jobs and writing it into job_table(DataFrame)
-    while True :
+    while manual_scroll_count :
         if manual_scroll_count + 15 == Total_pages_count:
             print("================ 已到達最底，翻頁完成 !!=======================")
             break
@@ -126,7 +126,9 @@ def main():
                 job_table = access_job_page(job_table,job_link)
                 if str(nth) == request_nth:
                     print(f"============= 已爬取 {nth} 個職缺，停止服務 !! ===============")
-                    sys.exit()
+                    manual_scroll_count = 0
+                    break
+                
         else : # another page
             for nth,job in enumerate(jobs[-20:],start = len(jobs)- (20 + 1)): # get last 20 jobs
                 driver.execute_script(f"arguments[0].scrollIntoView();",job)  # slide to target elem
@@ -136,7 +138,8 @@ def main():
                 job_table = access_job_page(job_table,job_link)
                 if str(nth) == request_nth:
                     print(f"============= 已爬取 {nth} 個職缺，停止服務 !! ===============")
-                    sys.exit()
+                    manual_scroll_count = 0
+                    break
         # driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         time.sleep(1)
         try:
