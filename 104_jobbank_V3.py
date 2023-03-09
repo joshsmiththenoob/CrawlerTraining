@@ -87,15 +87,16 @@ def main():
     url = "https://www.104.com.tw/jobs/main/"  # go to jobbank
     driver.get(url) # surf jobbank with browser
     driver.maximize_window() # maximize broswer window -> get more HTML ASAP
-    time.sleep(3)
+    # wait until element appearance
+    time.sleep(10)
 
     # KeyWord of interest
     driver.find_element(by=By.XPATH, value='/html/body/article[1]/div/div/div[4]/div/input').send_keys("Python工程師")
-    time.sleep(3)
+    time.sleep(10)
 
     # Push search button
     driver.find_element(by=By.XPATH,value='/html/body/article[1]/div/div/div[4]/div/button').click()
-    time.sleep(3)
+    time.sleep(10)
 
     # Scroll action
     # Step 1 : get all pages' count
@@ -114,7 +115,7 @@ def main():
     while manual_scroll_count :
         if manual_scroll_count + 15 == Total_pages_count:
             print("================ 已到達最底，翻頁完成 !!=======================")
-            break
+            return job_table
         jobs = driver.find_elements(By.CLASS_NAME, "js-job-link")
         print(f"================ 目前共有{len(jobs)}個職缺 ===================")
         if (len(jobs) - first_counts) / 20 + 1 == 1: # if 1st page
@@ -126,8 +127,7 @@ def main():
                 job_table = access_job_page(job_table,job_link)
                 if str(nth) == request_nth:
                     print(f"============= 已爬取 {nth} 個職缺，停止服務 !! ===============")
-                    manual_scroll_count = 0
-                    break
+                    return job_table
                 
         else : # another page
             for nth,job in enumerate(jobs[-20:],start = len(jobs)- (20 + 1)): # get last 20 jobs
@@ -138,8 +138,8 @@ def main():
                 job_table = access_job_page(job_table,job_link)
                 if str(nth) == request_nth:
                     print(f"============= 已爬取 {nth} 個職缺，停止服務 !! ===============")
-                    manual_scroll_count = 0
-                    break
+                    return job_table
+        
         # driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         time.sleep(1)
         try:
@@ -150,7 +150,8 @@ def main():
             time.sleep(2)
         except Exception :
             print("================ 不用手動，繼續滑下去!! 直到翻到第15頁 =================")
-    job_table.to_csv("test.csv",index=False) # 不顯示索引值並儲存至csv
-
+    
+    
 if __name__ == "__main__":
-    main()
+    job_table = main()
+    job_table.to_csv("test.csv",index=False) # 不顯示索引值並儲存至csv
